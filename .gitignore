@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+**/runtime/
+**/任务/
+**/__pycache__/
+*.pyc
+*.sqlite*
+*.db
+*.jsonl
+*.log
+*.png
+*.jpg
+*.app/
+.DS_Store
