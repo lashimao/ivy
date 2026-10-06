@@ -55,8 +55,8 @@ final class SpeechInput: ObservableObject {
             DispatchQueue.main.async {
                 guard self.generation == token else { return }
                 if let result { self.text = result.bestTranscription.formattedString }
-                if result?.isFinal == true { self.finish(); self.note = self.text.isEmpty ? "没有识别到语音" : "已转成文字" }
-                else if let error { NSLog("Ivy speech error: %@ %ld", (error as NSError).domain, (error as NSError).code); self.finish(); self.failed = self.text.isEmpty; self.note = self.text.isEmpty ? "未识别到语音，请检查麦克风或网络后重试" : "识别结束，文字已保留" }
+                if result?.isFinal == true { self.finish(); self.generation = UUID(); self.note = self.text.isEmpty ? "没有识别到语音" : "已转成文字" }
+                else if let error { NSLog("Ivy speech error: %@ %ld", (error as NSError).domain, (error as NSError).code); self.finish(); self.generation = UUID(); self.failed = self.text.isEmpty; self.note = self.text.isEmpty ? "未识别到语音，请检查麦克风或网络后重试" : "识别结束，文字已保留" }
             }
         }
         do {
@@ -67,11 +67,11 @@ final class SpeechInput: ObservableObject {
     }
     func stop() {
         guard recording else { return }
-        finish(); note = "正在整理文字…"
+        finish(); requesting = true; note = "正在整理文字…"
         let token = generation
         timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { [weak self] _ in
             guard let self, self.generation == token else { return }
-            self.generation = UUID(); self.task?.cancel(); self.task = nil
+            self.generation = UUID(); self.task?.cancel(); self.task = nil; self.requesting = false
             self.note = self.text.isEmpty ? "没有识别到语音" : "已转成文字"
         }
     }
