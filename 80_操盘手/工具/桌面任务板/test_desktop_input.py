@@ -36,3 +36,22 @@ class InputTests(unittest.TestCase):
   t=dict(id='ivy:claude_task',source='Claude',title='原名',thread='worker');r=self.req();r['target_id']=t['id'];self.submit(r,[t])
   prompt=json.loads(c.execute('select content from messages').fetchone()[0])['text'];self.assertNotIn('session_id',prompt)
 if __name__=='__main__':unittest.main()
+
+class ProjectInputTests(unittest.TestCase):
+ setUp=InputTests.setUp
+ tearDown=InputTests.tearDown
+ req=InputTests.req
+ submit=InputTests.submit
+ def test_project_context_is_bound_and_not_broad_authorization(self):
+  r=self.req();r['project_id']='project:p'
+  board={'tasks':[],'projects':[{'id':'project:p','title':'产品','goal':'发布'}]}
+  m.submit(r,self.db,board,wake=False)
+  c=sqlite3.connect(self.db);content=json.loads(c.execute('select content from messages').fetchone()[0])
+  self.assertEqual(content['desktop_context']['project']['id'],'project:p')
+  self.assertIn('不授权',content['desktop_context']['scope']);self.assertEqual(c.execute('select project_id from desktop_inputs').fetchone()[0],'project:p')
+ def test_request_cannot_change_project_on_retry(self):
+  r=self.req();b={'tasks':[],'projects':[{'id':'project:p','title':'产品','goal':''}]};m.submit(r,self.db,b,wake=False);r['project_id']='project:p'
+  with self.assertRaises(ValueError):m.submit(r,self.db,b,wake=False)
+ def test_deleted_project_rejected(self):
+  r=self.req();r['project_id']='project:missing'
+  with self.assertRaises(ValueError):self.submit(r)

@@ -1,0 +1,137 @@
+{
+  "generated": 1791255600,
+  "date": "演示工作区",
+  "errors": [],
+  "tasks": [
+    {
+      "id": "demo:0",
+      "title": "实现项目首页",
+      "state": "done",
+      "detail": "项目和目标已显示，版式验收通过。",
+      "updated": 1791255600,
+      "source": "Codex",
+      "thread": "",
+      "url": "",
+      "today": false,
+      "next": "",
+      "label": "已完成",
+      "project_id": "project:demo-tool"
+    },
+    {
+      "id": "demo:1",
+      "title": "核验安装流程",
+      "state": "running",
+      "detail": "正在检查安装后的功能与配置。",
+      "updated": 1791255599,
+      "source": "Codex",
+      "thread": "",
+      "url": "",
+      "today": false,
+      "next": "",
+      "label": "执行中",
+      "project_id": "project:demo-tool"
+    },
+    {
+      "id": "demo:2",
+      "title": "撰写产品介绍",
+      "state": "review",
+      "detail": "文案已生成，等待内容核验。",
+      "updated": 1791255598,
+      "source": "Claude",
+      "thread": "",
+      "url": "",
+      "today": false,
+      "next": "",
+      "label": "待核验",
+      "project_id": "project:demo-content"
+    },
+    {
+      "id": "demo:3",
+      "title": "整理公开资料",
+      "state": "done",
+      "detail": "材料路径与来源已整理。",
+      "updated": 1791255597,
+      "source": "Grok",
+      "thread": "",
+      "url": "",
+      "today": false,
+      "next": "",
+      "label": "已完成",
+      "project_id": "project:demo-doc"
+    }
+  ],
+  "projects": [
+    {
+      "id": "project:demo-tool",
+      "title": "发布一个小工具",
+      "goal": "从想法到可下载的第一个版本",
+      "state": "active",
+      "label": "执行中",
+      "running": 1,
+      "blocked": 0,
+      "total": 2,
+      "updated": 1791255600,
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "确定第一版功能",
+          "done": true
+        },
+        {
+          "id": "m2",
+          "title": "完成界面与验证",
+          "done": true
+        },
+        {
+          "id": "m3",
+          "title": "交付可运行版本",
+          "done": false
+        }
+      ],
+      "completed": 2,
+      "milestone_count": 3
+    },
+    {
+      "id": "project:demo-content",
+      "title": "产品介绍视频",
+      "goal": "做一条让人看懂产品的短视频",
+      "state": "active",
+      "label": "进行中",
+      "running": 0,
+      "blocked": 0,
+      "total": 1,
+      "updated": 1791255598,
+      "milestones": [
+        {
+          "id": "m4",
+          "title": "讲清楚使用场景",
+          "done": true
+        },
+        {
+          "id": "m5",
+          "title": "录制演示与交付",
+          "done": false
+        }
+      ],
+      "completed": 1,
+      "milestone_count": 2
+    },
+    {
+      "id": "project:demo-doc",
+      "title": "开源使用文档",
+      "goal": "让新用户能安装、配置和开始使用",
+      "state": "active",
+      "label": "进行中",
+      "running": 0,
+      "blocked": 0,
+      "total": 1,
+      "updated": 1791255597,
+      "milestones": [],
+      "completed": 0,
+      "milestone_count": 0
+    }
+  ],
+  "model": "演示数据",
+  "commands": [],
+  "ivy_online": false
+}

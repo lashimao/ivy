@@ -1,0 +1,13 @@
+name: Checks
+on: [push, pull_request]
+jobs:
+  tests:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python unit tests
+        run: |
+          python3 -m unittest discover -s 80_操盘手/工具/桌面任务板 -p 'test_*.py'
+          python3 -m unittest discover -s 80_操盘手/工具/Ivy指令入口 -p 'test_*.py'
+      - name: Build without starting services
+        run: python3 80_操盘手/工具/桌面任务板/build.py --output /tmp/Ivy.app

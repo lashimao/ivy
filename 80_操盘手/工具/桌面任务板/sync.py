@@ -2,6 +2,7 @@
 """Local, read-only task adapters. No model calls, network, or source DB writes."""
 import argparse, datetime as dt, fcntl, json, os, re, sqlite3, time
 from pathlib import Path
+from project_model import project_rows, EMPTY
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -108,7 +109,7 @@ def claude_tasks(cache):
 
 def sync():
     now=int(time.time()); config=read(HERE/'config.json',{}); overrides=read(DATA/'overrides.json',{}); cache=read(DATA/'cache.json',{})
-    tasks=[]; bound=set(); errors=[];names={};commands=[]
+    tasks=[]; bound=set(); errors=[];names={};commands=[];project_links={}
     try:
         with connect(CODEX) as c:
             names={r['id']:r['name'] for r in c.execute('select id,name from threads where name is not null')}
@@ -128,6 +129,9 @@ def sync():
             for r in c.execute("select m.id,m.note,m.created_ms from messages m left join deliveries d on m.id=d.message_id where d.message_id is null and m.status in ('pending','queued')"):
                 tasks.append(dict(id='inbox:'+r['id'],title='新任务 · 等待分派',state='pending',detail=clean(r['note']),updated=int(r['created_ms']/1000),source='Ivy',thread='',url=''))
             if c.execute("select 1 from sqlite_master where name='desktop_inputs'").fetchone():
+                if 'project_id' in {x[1] for x in c.execute('pragma table_info(desktop_inputs)')}:
+                    for link in c.execute("select d.task_key,i.project_id from desktop_inputs i join deliveries d on d.message_id=i.id where i.project_id<>'' order by i.created_ms"):
+                        project_links['ivy:'+link['task_key']]=link['project_id']
                 has_reply='reply' in {x[1] for x in c.execute('pragma table_info(desktop_inputs)')}
                 reply_column='i.reply' if has_reply else "''"
                 for r in c.execute('''select i.id,i.text,i.target_title,i.created_ms,m.status,m.note,d.task_key,t.thread_id,'''+reply_column+''' as reply
@@ -181,6 +185,9 @@ def sync():
         if not commands and any('Ivy' in e for e in errors):commands=old.get('commands',[])
     health=read(IVY.parent/'health.json',{})
     board={'generated':now,'date':dt.datetime.now(TZ).strftime('%Y年%m月%d日'),'errors':errors,'tasks':tasks,'commands':commands,'ivy_online':now-health.get('time',0)<120,'model':config.get('model','未核实')}
+    project_store=read(DATA/'projects.json',EMPTY)
+    project_store['assignments']={**project_links,**project_store.get('assignments',{})}
+    board['projects']=project_rows(tasks,project_store)
     write(DATA/'cache.json',cache);write(DATA/'board.json',board)
     return board
 

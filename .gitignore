@@ -13,3 +13,6 @@
 *.jpg
 *.app/
 .DS_Store
+
+!docs/projects.png
+!docs/project-detail.png
